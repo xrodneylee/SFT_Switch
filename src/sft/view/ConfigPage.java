@@ -1274,18 +1274,25 @@ public class ConfigPage extends JPanel implements ActionListener,ItemListener, W
 				sb1.append(str+ "\n");
 			}
 			sys_in.close();
-			//System.out.println(sb1.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("GO", " "));
-			conn.executeSQL(sb1.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("GO", " ").replaceAll("DSCSYS", ERPcommonDB.getSelectedItem().toString()).replaceAll("SMARTDSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			if(ERPVer.getSelectedItem().toString().equals("SM")){
+				conn.executeSQL(sb1.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("GO", " ").replaceAll("SMARTDSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			}else{
+				conn.executeSQL(sb1.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("GO", " ").replaceAll("DSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			}
+			
 			log("執行sys patch完成");
 			//-----執行公司別patch
 			log("執行公司別patch");
 			while ((str = cmp_in.readLine()) != null) {
-				//System.out.println(str);
 				sb2.append(str+ "\n");
 			}
 			cmp_in.close();
-			//System.out.println(sb2.toString().replaceAll("SFTSYS", SFTcommonDB.getText()));
-			conn.executeSQL(sb2.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("DSCSYS", ERPcommonDB.getSelectedItem().toString()).replaceAll("SMARTDSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			if(ERPVer.getSelectedItem().toString().equals("SM")){
+				conn.executeSQL(sb2.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("SMARTDSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			}else{
+				conn.executeSQL(sb2.toString().replaceAll("SFTSYS", SFTcommonDB.getText()).replaceAll("DSCSYS", ERPcommonDB.getSelectedItem().toString()));
+			}
+			
 			log("執行公司別patch完成");
 			log("執行patch完成");
 		} catch (FileNotFoundException e1) {
