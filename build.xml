@@ -1,63 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="SFT_Switch">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../eclipse-jee-luna-R-win32-x86_64/eclipse/"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
-    <path id="Web App Libraries.libraryclasspath"/>
-    <path id="EAR Libraries.libraryclasspath"/>
-    <path id="SFT_Switch.classpath">
-        <pathelement location="build/classes"/>
-        <path refid="Web App Libraries.libraryclasspath"/>
-        <path refid="EAR Libraries.libraryclasspath"/>
-        <pathelement location="../../API/dwr.jar"/>
-        <pathelement location="../../API/jRegistryKey-bin-1.4.0/jRegistryKey-bin-1.4.0/jRegistryKey.jar"/>
-        <pathelement location="../../API/ini4j-0.5.4.jar"/>
-        <pathelement location="../../API/dom4j-2.0.0-ALPHA-2.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="build/classes"/>
-        <copy includeemptydirs="false" todir="build/classes">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="build/classes"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="build/classes" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="SFT_Switch.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="Main (1)">
-        <java classname="sft.view.Main" failonerror="true" fork="yes">
-            <classpath refid="SFT_Switch.classpath"/>
-        </java>
-    </target>
+<project basedir="." name="SFT_Switch">
+	<target name="setProperties">
+		<property environment="env" />
+		<property file="build.properties" />
+		<!-- 引用外部jar -->
+		<path id="classpath">
+			<fileset dir="${LIB_HOME}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+	</target>
+
+	<target name="prepareDir" depends="setProperties">
+		<!-- 編譯前，先建置編譯資料夾 -->
+		<mkdir dir="bin" />
+		<!-- 刪除已存在的CLASS檔 -->
+		<delete includeemptydirs="true">
+			<fileset dir="bin">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="compile" depends="prepareDir">
+		<javac destdir="bin" debug="true" includeantruntime="false" deprecation="false" optimize="false" failonerror="true" encoding="UTF-8">
+			<src path="src" />
+			<classpath refid="classpath" />
+		</javac>
+		<!-- 將jRegistryKey.dll複製到bin中 -->
+		<copy todir="bin">
+			<fileset dir="src">
+				<include name="**/*.dll" />
+			</fileset>
+		</copy>
+		<jar jarfile="${BUILD_HOME}/SFT_Switch.jar">
+			<fileset dir="bin">
+				<include name="**/*.class" />
+				<include name="**/*.dll" />
+			</fileset>
+		</jar>
+	</target>
 </project>
